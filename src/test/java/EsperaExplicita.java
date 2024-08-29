@@ -3,13 +3,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class Navegadores {
+public class EsperaExplicita {
     public static void main(String[] args) throws InterruptedException {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
@@ -23,18 +22,21 @@ public class Navegadores {
         // ABRIR EN PANTALLA COMPLETA LA VENTANA DEL NAVEGADOR
         driver.manage().window().maximize();
 
-        // Antes de continuar se espera 5 segundos
-//        try {
-//            Thread.sleep((5000));
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+        // INGRESAR AL LOGIN
+        // Hacer clic en "My Account"
+        driver.findElement(By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/a/span")).click();
+        // Hacer clic en "Login"
+        driver.findElement(By.xpath("//*[@id=\"top\"]/div/div[2]/ul/li[2]/div/ul/li[2]/a")).click();
 
-        // ESPERA IMPLICITA
+        // ESPERA EXPLICITA
+        // Esperar 10 segundos o hasta que el campo de "E-mail address" este visible
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-        // Capturar un elemento por su XPath
-        // HACER CLIC EN LA OPCION CAMARA
-        driver.findElement(By.xpath("//*[@id=\"narbar-menu\"]/ul/li[7]/a")).click();
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("email")));
+        // Cuando este visible hacemos clic sobre el campo "email"
+        driver.findElement(By.name("email")).click();
+        // Esperamos 5 segundos
+        Thread.sleep((5000));
+        // Ingresamos el texto "correo@test.com"
+        driver.findElement(By.name("email")).sendKeys("correo@test.com");
     }
 }

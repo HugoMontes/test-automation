@@ -63,40 +63,29 @@ public class Practica02 {
         // IMPRIMIR EL TEXTO
         System.out.println("Texto obtenido: " + completeText.toString());
 
-//        // CLIC BOTON ADD
-//        clickAddButton();
-//        Thread.sleep(3000);
-//
-//        // AÑADIR USUARIO "Admin"
-//        String adminUserName = addNewUser("Admin");
-//        Thread.sleep(5000);
-//
-//        // CLIC BOTON ADD
-//        clickAddButton();
-//        Thread.sleep(3000);
-//
-//        // AÑADIR USUARIO "ESS"
-//        String essUserName =addNewUser("ESS");
-//        Thread.sleep(5000);
+        // CLIC BOTON ADD
+        clickAddButton();
+        Thread.sleep(3000);
 
+        // AÑADIR USUARIO "Admin"
+        String adminUserName = addNewUser("Admin");
+        Thread.sleep(5000);
 
-        String adminUserName = "test7051";
-        String essUserName = "test8821";
+        // CLIC BOTON ADD
+        clickAddButton();
+        Thread.sleep(3000);
 
+        // AÑADIR USUARIO "ESS"
+        String essUserName =addNewUser("ESS");
 
         // BUSCAR USUARIO ADMIN
         findUserName(adminUserName);
-//        WebElement inputFindUsername = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input"));
-//        inputFindUsername.sendKeys(adminUserName);
-//        WebElement btnSearch = driver.findElement(By.xpath("//button[@type='submit']"));
-//        btnSearch.click();
         Thread.sleep(3000);
 
         // EDITAR USUARIO ADMIN
         clickEditButton();
         Thread.sleep(3000);
         editRoleAndStatusUser("ESS", "Disabled");
-        Thread.sleep(10000);
 
         // BUSCAR USUARIO ESS
         findUserName(essUserName);
@@ -106,12 +95,11 @@ public class Practica02 {
         clickEditButton();
         Thread.sleep(3000);
         editRoleAndStatusUser("Admin", "Disabled");
-
     }
 
     @AfterClass //DESPUES
     public void cerrar() {
-//        driver.quit();
+        driver.quit();
     }
 
     private String addNewUser(String userRole) throws InterruptedException {
@@ -163,7 +151,8 @@ public class Practica02 {
     }
 
     private void findUserName(String username) {
-        WebElement inputFindUsername = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebElement inputFindUsername =  wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input")));
         inputFindUsername.sendKeys(username);
         WebElement btnSearch = driver.findElement(By.xpath("//button[@type='submit']"));
         btnSearch.click();

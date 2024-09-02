@@ -76,7 +76,7 @@ public class Practica02 {
         Thread.sleep(3000);
 
         // AÑADIR USUARIO "ESS"
-        String essUserName =addNewUser("ESS");
+        String essUserName = addNewUser("ESS");
 
         // BUSCAR USUARIO ADMIN
         findUserName(adminUserName);
@@ -152,7 +152,7 @@ public class Practica02 {
 
     private void findUserName(String username) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        WebElement inputFindUsername =  wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input")));
+        WebElement inputFindUsername = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input")));
         inputFindUsername.sendKeys(username);
         WebElement btnSearch = driver.findElement(By.xpath("//button[@type='submit']"));
         btnSearch.click();

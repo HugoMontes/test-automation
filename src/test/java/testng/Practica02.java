@@ -13,17 +13,19 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Random;
 
 public class Practica02 {
 
     private WebDriver driver;
-
     private final Integer MENU_USER_ROLE = 0;
     private final Integer MENU_STATUS = 1;
+    private final String NEW_PASSWORD = "Password123";
+    private Random random = new Random();
 
     @BeforeClass //ANTES
     public void setup() {
-        //CONFIGURAR EL WEBDRIVER
+        //CONFIGURAR WEBDRIVER
         System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/test/resources/chromedriver.exe");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
@@ -33,7 +35,7 @@ public class Practica02 {
     public void LoginTest() throws InterruptedException {
         driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
 
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         WebElement username = driver.findElement(By.name("username"));
         username.sendKeys("Admin");
@@ -62,18 +64,60 @@ public class Practica02 {
         System.out.println("Texto obtenido: " + completeText.toString());
 
         // CLIC BOTON ADD
-        WebElement btnAdd = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[2]/div[1]/button"));
-        btnAdd.click();
-
+        clickAddButton();
         Thread.sleep(3000);
 
-        selectFormOption(MENU_USER_ROLE, "Admin");
-        selectFormOption(MENU_STATUS, "Enabled");
+        // AÑADIR USUARIO "Admin"
+        addNewUser("Admin");
+        Thread.sleep(5000);
+
+        // CLIC BOTON ADD
+        clickAddButton();
+        Thread.sleep(3000);
+
+        // AÑADIR USUARIO "ESS"
+        addNewUser("ESS");
+        Thread.sleep(5000);
     }
 
     @AfterClass //DESPUES
     public void cerrar() {
 //        driver.quit();
+    }
+
+    private void addNewUser(String userRole) throws InterruptedException {
+        selectFormOption(MENU_USER_ROLE, userRole);
+        selectFormOption(MENU_STATUS, "Enabled");
+
+        selectFormEmployeeName("Ravi");
+
+        WebElement formUserName = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[1]/div/div[4]/div/div[2]/input"));
+        String formUserNameStr = "test" + random.nextInt(1000) + 1;
+        formUserName.sendKeys(formUserNameStr);
+
+        WebElement formPassword = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[2]/div/div[1]/div/div[2]/input"));
+        formPassword.sendKeys(NEW_PASSWORD);
+
+        WebElement formConfirmPassword = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[2]/div/div[2]/div/div[2]/input"));
+        formConfirmPassword.sendKeys(NEW_PASSWORD);
+
+        System.out.println("-----------------------------------------");
+        System.out.println("Nombre Usuario: " + formUserNameStr);
+        System.out.println("Rol : " + userRole);
+        System.out.println("Password: " + NEW_PASSWORD);
+
+        Thread.sleep(3000);
+
+        WebElement btnSave = driver.findElement(By.xpath("//button[@type='submit']"));
+        btnSave.click();
+    }
+
+    private void clickAddButton() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        // ESPERAR HASTA QUE EL BOTON SEA VISIBLE
+        WebElement btnAdd = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[2]/div[1]/button")));
+//        WebElement btnAdd = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[2]/div[1]/button"));
+        btnAdd.click();
     }
 
     private String getCompleteText(List<WebElement> breadcrumbItems) {
@@ -87,8 +131,8 @@ public class Practica02 {
         return textoCompleto.toString();
     }
 
-    private void selectFormOption(Integer selectedMenu, String selectedOption){
-        // ESPERAR HASTA QUE EL ELEMENTO ESTÉ PRESENTE Y VISIBLE
+    private void selectFormOption(Integer selectedMenu, String selectedOption) {
+        // ESPERAR HASTA QUE EL ELEMENTO ESTÉ PRESENTE Y VISIBLE // fhms
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         // HACER CLIC EN EL SEGUNDO SELECTOR (Status)
@@ -105,5 +149,22 @@ public class Practica02 {
                 break;
             }
         }
+    }
+
+    private void selectFormEmployeeName(String employeeName) throws InterruptedException {
+        // INGRESAR EL NOMBRE A BUSCAR // fhms
+        WebElement formEmployeeName = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/form/div[1]/div/div[2]/div/div[2]/div/div/input"));
+        formEmployeeName.sendKeys(employeeName);
+
+        Thread.sleep(5000);
+
+        // ESPERAR HASTA QUE EL ELEMENTO ESTÉ PRESENTE Y VISIBLE
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        // ESPERAR HASTA QUE LAS OPCIONES SEAN VISIBLES
+        List<WebElement> opcionesStatus = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".oxd-autocomplete-dropdown")));
+
+        // SELECCIONAR LA PRIMERA OPCION
+        opcionesStatus.get(0).click();
     }
 }

@@ -35,7 +35,7 @@ public class Practica02 {
     public void LoginTest() throws InterruptedException {
         driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
 
-        Thread.sleep(5000);
+        Thread.sleep(8000);
 
         WebElement username = driver.findElement(By.name("username"));
         username.sendKeys("Admin");
@@ -63,21 +63,50 @@ public class Practica02 {
         // IMPRIMIR EL TEXTO
         System.out.println("Texto obtenido: " + completeText.toString());
 
-        // CLIC BOTON ADD
-        clickAddButton();
+//        // CLIC BOTON ADD
+//        clickAddButton();
+//        Thread.sleep(3000);
+//
+//        // AÑADIR USUARIO "Admin"
+//        String adminUserName = addNewUser("Admin");
+//        Thread.sleep(5000);
+//
+//        // CLIC BOTON ADD
+//        clickAddButton();
+//        Thread.sleep(3000);
+//
+//        // AÑADIR USUARIO "ESS"
+//        String essUserName =addNewUser("ESS");
+//        Thread.sleep(5000);
+
+
+        String adminUserName = "test7051";
+        String essUserName = "test8821";
+
+
+        // BUSCAR USUARIO ADMIN
+        findUserName(adminUserName);
+//        WebElement inputFindUsername = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input"));
+//        inputFindUsername.sendKeys(adminUserName);
+//        WebElement btnSearch = driver.findElement(By.xpath("//button[@type='submit']"));
+//        btnSearch.click();
         Thread.sleep(3000);
 
-        // AÑADIR USUARIO "Admin"
-        addNewUser("Admin");
-        Thread.sleep(5000);
+        // EDITAR USUARIO ADMIN
+        clickEditButton();
+        Thread.sleep(3000);
+        editRoleAndStatusUser("ESS", "Disabled");
+        Thread.sleep(10000);
 
-        // CLIC BOTON ADD
-        clickAddButton();
+        // BUSCAR USUARIO ESS
+        findUserName(essUserName);
         Thread.sleep(3000);
 
-        // AÑADIR USUARIO "ESS"
-        addNewUser("ESS");
-        Thread.sleep(5000);
+        // EDITAR USUARIO ESS
+        clickEditButton();
+        Thread.sleep(3000);
+        editRoleAndStatusUser("Admin", "Disabled");
+
     }
 
     @AfterClass //DESPUES
@@ -85,7 +114,7 @@ public class Practica02 {
 //        driver.quit();
     }
 
-    private void addNewUser(String userRole) throws InterruptedException {
+    private String addNewUser(String userRole) throws InterruptedException {
         selectFormOption(MENU_USER_ROLE, userRole);
         selectFormOption(MENU_STATUS, "Enabled");
 
@@ -110,14 +139,34 @@ public class Practica02 {
 
         WebElement btnSave = driver.findElement(By.xpath("//button[@type='submit']"));
         btnSave.click();
+
+        return formUserNameStr;
+    }
+
+    private void editRoleAndStatusUser(String newRole, String newStatus) {
+        selectFormOption(MENU_USER_ROLE, "ESS");
+        selectFormOption(MENU_STATUS, "Disabled");
+        WebElement btnSave = driver.findElement(By.xpath("//button[@type='submit']"));
+        btnSave.click();
     }
 
     private void clickAddButton() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         // ESPERAR HASTA QUE EL BOTON SEA VISIBLE
         WebElement btnAdd = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[2]/div[1]/button")));
-//        WebElement btnAdd = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[2]/div[1]/button"));
         btnAdd.click();
+    }
+
+    private void clickEditButton() {
+        List<WebElement> editButtons = driver.findElements(By.cssSelector(".bi-pencil-fill"));
+        editButtons.get(0).click();
+    }
+
+    private void findUserName(String username) {
+        WebElement inputFindUsername = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div[1]/div[2]/form/div[1]/div/div[1]/div/div[2]/input"));
+        inputFindUsername.sendKeys(username);
+        WebElement btnSearch = driver.findElement(By.xpath("//button[@type='submit']"));
+        btnSearch.click();
     }
 
     private String getCompleteText(List<WebElement> breadcrumbItems) {
